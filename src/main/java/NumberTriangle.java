@@ -89,11 +89,11 @@ public class NumberTriangle {
      */
     public int retrieve(String path) {
         NumberTriangle cur = this;
-        for (int i = 0; i < path.length(); i++) {
+        for (int i = 0; i < path.length(); i++){
             char ch = path.charAt(i);
-            if (ch == 'l') {
+            if (ch == 'l'){
                 cur = cur.left;
-            } else if (ch == 'r') {
+            } else if (ch == 'r'){
                 cur = cur.right;
             }
         }
@@ -117,15 +117,13 @@ public class NumberTriangle {
         InputStream inputStream = NumberTriangle.class.getClassLoader().getResourceAsStream(fname);
         BufferedReader br = new BufferedReader(new InputStreamReader(inputStream));
 
-
         java.util.List<int[]> rows = new java.util.ArrayList<>();
-
 
         String line = br.readLine();
         while (line != null) {
             line = line.trim();
             if (!line.isEmpty()){
-                String[] parts = line.split("\\s+");
+                String[] parts = line.split(" ");
                 int[] vals = new int[parts.length];
                 for (int i = 0; i < parts.length; i++){
                     vals[i] = Integer.parseInt(parts[i]);
@@ -137,9 +135,23 @@ public class NumberTriangle {
         }
         br.close();
 
-
-
-        return top;
+        int last = rows.size() - 1;
+        NumberTriangle[] below = new NumberTriangle[rows.get(last).length];
+        for (int j = 0; j < below.length; j++){
+            below[j] = new NumberTriangle(rows.get(last)[j]);
+        }
+        for (int r = last - 1; r >= 0; r--){
+            int[] rowVals = rows.get(r);
+            NumberTriangle[] current = new NumberTriangle[rowVals.length];
+            for (int c = 0; c < rowVals.length; c++){
+                NumberTriangle node = new NumberTriangle(rowVals[c]);
+                node.setLeft(below[c]);
+                node.setRight(below[c + 1]);
+                current[c] = node;
+            }
+            below = current;
+        }
+        return below[0];
     }
 
     public static void main(String[] args) throws IOException {
